@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calculadora de Oro Puro</title>
+<style>
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f4ef;
+    --bg-tertiary: #faf9f5;
+    --bg-info: #e6f1fb;
+    --text-primary: #1a1915;
+    --text-secondary: #5f5e5a;
+    --text-tertiary: #888780;
+    --text-info: #0c447c;
+    --border-tertiary: rgba(0, 0, 0, 0.1);
+    --border-secondary: rgba(0, 0, 0, 0.2);
+    --border-info: #378add;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 2rem 1rem;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    border: 0.5px solid var(--border-tertiary);
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 0 2rem;
+  }
+
+  label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 14px;
+    border: 0.5px solid var(--border-tertiary);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type="number"]:hover, select:hover {
+    border-color: var(--border-secondary);
+  }
+
+  input[type="number"]:focus, select:focus {
+    border-color: var(--border-info);
+    box-shadow: 0 0 0 2px rgba(55, 138, 221, 0.15);
+  }
+
+  button {
+    height: 36px;
+    padding: 0 14px;
+    font-size: 14px;
+    background: transparent;
+    color: var(--text-primary);
+    border: 0.5px solid var(--border-secondary);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  button:hover {
+    background: var(--bg-secondary);
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+
+  .input-prefix {
+    position: relative;
+  }
+
+  .input-prefix span.prefix {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  .input-prefix input {
+    padding-left: 22px;
+  }
+
+  .resumen {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .resumen-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 10px;
+  }
+
+  .resumen-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .resumen-item-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0 0 4px;
+  }
+
+  .resumen-item-value {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .resumen-item-value-sm {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .resumen-divider {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 0.5px solid var(--border-tertiary);
+  }
+
+  .radios {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .radios label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .radios input[type="radio"] {
+    margin: 0;
+  }
+
+  .tabla-wrapper {
+    border: 0.5px solid var(--border-tertiary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    table-layout: fixed;
+  }
+
+  thead tr {
+    background: var(--bg-secondary);
+  }
+
+  th {
+    text-align: right;
+    padding: 10px 12px;
+    font-weight: 500;
+  }
+
+  th.left {
+    text-align: left;
+  }
+
+  td {
+    padding: 10px 12px;
+    text-align: right;
+  }
+
+  td.left {
+    text-align: left;
+  }
+
+  tbody tr {
+    border-top: 0.5px solid var(--border-tertiary);
+  }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 8px;
+  }
+
+  .section-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0 0 12px;
+  }
+
+  .btn-active {
+    background: var(--bg-info) !important;
+    color: var(--text-info) !important;
+    border-color: var(--border-info) !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1f1e1b;
+      --bg-secondary: #2a2926;
+      --bg-tertiary: #181715;
+      --bg-info: #0c447c;
+      --text-primary: #f5f4ef;
+      --text-secondary: #b4b2a9;
+      --text-tertiary: #888780;
+      --text-info: #b5d4f4;
+      --border-tertiary: rgba(255, 255, 255, 0.12);
+      --border-secondary: rgba(255, 255, 255, 0.22);
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Calculadora de oro puro</h1>
+  <p class="subtitle">Calcula precios por gramos o por monto a invertir, con desglose por quilataje</p>
+
+  <div class="grid-2">
+    <div>
+      <label>Precio oro puro (por gramo)</label>
+      <div class="input-prefix">
+        <span class="prefix">$</span>
+        <input type="number" id="precio" value="2670" min="0" step="0.01" />
+      </div>
+    </div>
+    <div>
+      <label>IVA (%)</label>
+      <input type="number" id="iva" value="16" min="0" step="0.01" />
+    </div>
+  </div>
+
+  <div style="margin-bottom: 1rem;">
+    <label>Calcular a partir de</label>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+      <button type="button" id="btn-gramos">Gramos de oro puro</button>
+      <button type="button" id="btn-monto">Monto a invertir</button>
+    </div>
+  </div>
+
+  <div id="campo-gramos" style="margin-bottom: 1rem;">
+    <label>Gramos de oro puro</label>
+    <input type="number" id="gramos" value="10" min="0" step="0.001" />
+  </div>
+
+  <div id="campo-monto" style="margin-bottom: 1rem; display: none;">
+    <label>Monto disponible a invertir</label>
+    <div class="input-prefix">
+      <span class="prefix">$</span>
+      <input type="number" id="monto" value="200000" min="0" step="0.01" />
+    </div>
+    <div class="radios">
+      <label>
+        <input type="radio" name="base-monto" value="sin" checked /> Monto es sin IVA
+      </label>
+      <label>
+        <input type="radio" name="base-monto" value="con" /> Monto ya incluye IVA
+      </label>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 1.5rem;">
+    <label>Moneda</label>
+    <select id="moneda">
+      <option value="MXN">MXN ($)</option>
+      <option value="USD">USD ($)</option>
+      <option value="EUR">EUR (€)</option>
+    </select>
+  </div>
+
+  <div class="resumen">
+    <p id="resumen-label" class="resumen-label">Precio del oro puro especificado</p>
+    <div class="resumen-grid">
+      <div>
+        <p class="resumen-item-label">Gramos de oro puro</p>
+        <p id="res-gramos" class="resumen-item-value">0 g</p>
+      </div>
+      <div>
+        <p class="resumen-item-label">Precio sin IVA</p>
+        <p id="total-sin-iva" class="resumen-item-value">$0</p>
+      </div>
+    </div>
+    <div class="resumen-grid resumen-divider">
+      <div>
+        <p class="resumen-item-label">IVA <span id="iva-label" style="color: var(--text-tertiary);">(16%)</span></p>
+        <p id="iva-monto" class="resumen-item-value-sm">$0</p>
+      </div>
+      <div>
+        <p class="resumen-item-label">Precio con IVA</p>
+        <p id="total-con-iva" class="resumen-item-value">$0</p>
+      </div>
+    </div>
+    <p id="sobrante" style="font-size: 12px; color: var(--text-secondary); margin: 10px 0 0; display: none;"></p>
+  </div>
+
+  <p class="section-title">Desglose por quilataje</p>
+  <p class="section-subtitle">Cuántos gramos de aleación se pueden producir con el oro puro calculado</p>
+
+  <div class="tabla-wrapper">
+    <table id="tabla-quilates">
+      <thead>
+        <tr>
+          <th class="left" style="width: 16%;">Quilate</th>
+          <th style="width: 14%; color: var(--text-secondary);">Pureza</th>
+          <th style="width: 22%;">Gramos aleación</th>
+          <th style="width: 24%;">Precio s/IVA</th>
+          <th style="width: 24%;">Precio c/IVA</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-quilates"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+(function() {
+  const quilates = [
+    { k: 24, pureza: 1.0000 },
+    { k: 22, pureza: 0.9167 },
+    { k: 21, pureza: 0.8750 },
+    { k: 18, pureza: 0.7500 },
+    { k: 14, pureza: 0.5833 },
+    { k: 10, pureza: 0.4167 },
+    { k: 8,  pureza: 0.3333 }
+  ];
+
+  const symbols = { MXN: '$', USD: '$', EUR: '€' };
+
+  const $precio = document.getElementById('precio');
+  const $gramos = document.getElementById('gramos');
+  const $monto = document.getElementById('monto');
+  const $iva = document.getElementById('iva');
+  const $moneda = document.getElementById('moneda');
+  const $btnGramos = document.getElementById('btn-gramos');
+  const $btnMonto = document.getElementById('btn-monto');
+  const $campoGramos = document.getElementById('campo-gramos');
+  const $campoMonto = document.getElementById('campo-monto');
+  const $resumenLabel = document.getElementById('resumen-label');
+  const $resGramos = document.getElementById('res-gramos');
+  const $totalSin = document.getElementById('total-sin-iva');
+  const $totalCon = document.getElementById('total-con-iva');
+  const $ivaMonto = document.getElementById('iva-monto');
+  const $ivaLabel = document.getElementById('iva-label');
+  const $sobrante = document.getElementById('sobrante');
+  const $tbody = document.getElementById('tbody-quilates');
+
+  let modo = 'gramos';
+
+  function fmt(n, sym) {
+    if (!isFinite(n)) n = 0;
+    return sym + n.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function fmtGr(n) {
+    if (!isFinite(n)) n = 0;
+    return n.toLocaleString('es-MX', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' g';
+  }
+
+  function activarBoton(activo) {
+    if (activo === 'gramos') {
+      $btnGramos.classList.add('btn-active');
+      $btnMonto.classList.remove('btn-active');
+    } else {
+      $btnMonto.classList.add('btn-active');
+      $btnGramos.classList.remove('btn-active');
+    }
+  }
+
+  function calc() {
+    const precio = parseFloat($precio.value) || 0;
+    const ivaPct = parseFloat($iva.value) || 0;
+    const sym = symbols[$moneda.value] || '$';
+    const ivaFactor = 1 + ivaPct / 100;
+
+    let gramos = 0;
+    let totalSin = 0;
+    let sobranteMsg = '';
+
+    if (modo === 'gramos') {
+      gramos = parseFloat($gramos.value) || 0;
+      totalSin = precio * gramos;
+      $resumenLabel.textContent = 'Precio del oro puro especificado';
+      $sobrante.style.display = 'none';
+    } else {
+      const monto = parseFloat($monto.value) || 0;
+      const baseSel = document.querySelector('input[name="base-monto"]:checked');
+      const base = baseSel ? baseSel.value : 'sin';
+      if (base === 'con') {
+        totalSin = ivaFactor > 0 ? monto / ivaFactor : 0;
+        gramos = precio > 0 ? totalSin / precio : 0;
+        sobranteMsg = 'Con ' + fmt(monto, sym) + ' (IVA incluido) alcanzas para ' + fmtGr(gramos) + ' de oro puro.';
+      } else {
+        totalSin = monto;
+        gramos = precio > 0 ? totalSin / precio : 0;
+        sobranteMsg = 'Con ' + fmt(monto, sym) + ' (antes de IVA) alcanzas para ' + fmtGr(gramos) + ' de oro puro.';
+      }
+      $resumenLabel.textContent = 'Cuánto oro puro alcanzas con tu inversión';
+      $sobrante.style.display = 'block';
+      $sobrante.textContent = sobranteMsg;
+    }
+
+    const ivaMontoVal = totalSin * (ivaPct / 100);
+    const totalCon = totalSin + ivaMontoVal;
+
+    $resGramos.textContent = fmtGr(gramos);
+    $totalSin.textContent = fmt(totalSin, sym);
+    $totalCon.textContent = fmt(totalCon, sym);
+    $ivaMonto.textContent = fmt(ivaMontoVal, sym);
+    $ivaLabel.textContent = '(' + ivaPct + '%)';
+
+    let rows = '';
+    quilates.forEach(function(q, i) {
+      const gramosAleacion = q.pureza > 0 ? gramos / q.pureza : 0;
+      const precioSin = gramosAleacion * precio * q.pureza;
+      const precioCon = precioSin * ivaFactor;
+      const highlight = q.k === 24 ? 'background: var(--bg-info);' : (i % 2 === 1 ? 'background: var(--bg-secondary);' : '');
+      const kColor = q.k === 24 ? 'color: var(--text-info); font-weight: 500;' : '';
+      rows += '<tr style="' + highlight + '">' +
+        '<td class="left" style="' + kColor + '">' + q.k + 'K</td>' +
+        '<td style="color: var(--text-secondary);">' + (q.pureza * 100).toFixed(2) + '%</td>' +
+        '<td style="font-weight: 500;">' + fmtGr(gramosAleacion) + '</td>' +
+        '<td>' + fmt(precioSin, sym) + '</td>' +
+        '<td>' + fmt(precioCon, sym) + '</td>' +
+        '</tr>';
+    });
+    $tbody.innerHTML = rows;
+  }
+
+  $btnGramos.addEventListener('click', function() {
+    modo = 'gramos';
+    $campoGramos.style.display = 'block';
+    $campoMonto.style.display = 'none';
+    activarBoton('gramos');
+    calc();
+  });
+
+  $btnMonto.addEventListener('click', function() {
+    modo = 'monto';
+    $campoGramos.style.display = 'none';
+    $campoMonto.style.display = 'block';
+    activarBoton('monto');
+    calc();
+  });
+
+  [$precio, $gramos, $monto, $iva, $moneda].forEach(function(el) {
+    el.addEventListener('input', calc);
+    el.addEventListener('change', calc);
+  });
+  document.querySelectorAll('input[name="base-monto"]').forEach(function(el) {
+    el.addEventListener('change', calc);
+  });
+
+  activarBoton('gramos');
+  calc();
+})();
+</script>
+</body>
+</html>
